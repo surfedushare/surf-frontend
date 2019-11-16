@@ -6,7 +6,7 @@
       >
         <div class="center_block center-header">
           <div class="search__info_top">
-            <BreadCrumbs :items="items" />
+            <BreadCrumbs :items="breadcrumbItems" />
             <h2 v-if="materials && !materials_loading">{{ $t('Search-results') }} {{ `(${materials.records_total})` }}</h2>
             <img
               src="/images/pictures/rawpixel-760027-unsplash.jpg"
@@ -125,6 +125,8 @@ export default {
         { value: 'date_descending' },
         { value: 'date_ascending' }
     ],
+      breadcrumbItems: [{ title: this.$t('Home'), url: this.localePath('index') }],
+      fromRoute: null
     };
   },
   computed: {
@@ -133,9 +135,22 @@ export default {
       'materials_loading',
       'materials_in_line',
       'active_filter'
-    ])
+    ]),
+
+  },
+  beforeRouteEnter(to, fromRoute, next) {
+    next(vm => {
+      vm.fromRoute = fromRoute;
+    });
   },
   watch: {
+    fromRoute(newRoute) {
+      let items = [{ title: this.$t('Home'), url: this.localePath('index') }];
+      if(newRoute.name && newRoute.name.startsWith('themes-id')) {
+        items.push({ title: newRoute.name, url: newRoute.path })
+      }
+      this.breadcrumbItems = items;
+    },
     search(search, prev) {
       if (search && !this.materials_loading) {
         this.$store.dispatch('searchMaterials', search);
