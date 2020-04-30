@@ -7,5 +7,6 @@ module.exports = {
                 "~": path.resolve(__dirname + '/src')
             }
         }
-    }
+    },
+    transpileDependencies: ['@sentry']
 };
